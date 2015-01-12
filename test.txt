@@ -1,0 +1,5 @@
+12/01/2015, kursi: 1.9088
+gold: 39.15 (74.7295 GEL)
+palladium: 25.5598 (48.7885 GEL)
+platinum: 39.2882 (74.9933 GEL)
+silver: 0.5287 (1.0092 GEL)
