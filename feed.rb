@@ -1,9 +1,7 @@
-require 'oga'
 require 'net/http'
 require 'logger'
 require 'json'
 
-$log = Logger.new(STDOUT)
 class Trade
   @@precious_metals_url = 'http://www.xmlcharts.com/cache/precious-metals.php?format=json'
   @@exchange_rate_url = 'http://www.nbg.ge/rss.php'
@@ -15,6 +13,7 @@ class Trade
   def fetch_precious_metals(curr="usd")
     @log.info('Getting precious metal prices')
     body = Net::HTTP.get(URI.parse(@@precious_metals_url))
+    #body = File.read('precious-metals.json')
     @log.info('Got precious metal prices')
     JSON.parse(body)[curr]
   end
@@ -41,11 +40,10 @@ class Trade
       raise
     end
 
-    first_line = Time.now.strftime("%d/%m/%Y") +
-        ", kursi: #{rate.round(4)}"
+    first_line = Time.now.strftime("%d/%m/%Y") +", kursi: #{rate.round(4)}"
     metal_liens = @items.map do |item|
-      pr_usd = metals[item].to_f.round(4)
-      pr_gel = (pr_usd * rate).round(4)
+      pr_usd = metals[item].to_f.round(3)
+      pr_gel = (pr_usd * rate).round(3)
       "#{item}: #{pr_usd} (#{pr_gel} GEL)"
     end
     text_lines = [first_line] + metal_liens
@@ -53,6 +51,8 @@ class Trade
   end
 end
 
-t  = Trade.new $log
+logfile = File.open('avtofeed.log', File::WRONLY | File::APPEND | File::CREAT)
+logger = Logger.new(logfile, 1, 1024000)
+t  = Trade.new logger
 puts t.text_feed
 
